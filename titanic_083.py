@@ -12,28 +12,26 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
 
-
 def main():
     warnings.filterwarnings('ignore')
 
     # CSVを読み込む
+    print('read csv')
     train = pd.read_csv("input_csv/train.csv")
     test = pd.read_csv("input_csv/test.csv")
 
     # データの統合
+    print('merge train test')
     dataset = pd.concat([train, test], ignore_index=True)
 
     # 提出用に
     PassengerId = test['PassengerId']
 
-    # 全体の欠損データの個数確認
-    dataset_null = dataset.fillna(np.nan)
-    dataset_null.isnull().sum()
-
     # Cabin は一旦除外
     del dataset["Cabin"]
 
     # Age(年齢)とFare(料金)はそれぞれの中央値、Embarked(出港地)はS(Southampton)を代入
+    print('filllna')
     dataset["Age"].fillna(dataset.Age.mean(), inplace=True) 
     dataset["Fare"].fillna(dataset.Fare.mean(), inplace=True) 
     dataset["Embarked"].fillna("S", inplace=True)
@@ -42,6 +40,7 @@ def main():
     dataset = dataset[['Survived', 'Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'Parch', 'SibSp']]
 
     # ダミー変数を作成
+    print('make dummy data')
     dataset_dummies = pd.get_dummies(dataset)
 
     # データをtrainとtestに分解 
@@ -55,11 +54,12 @@ def main():
     y = train_set.Survived # 正解データ
 
     # 予測モデルの作成
+    print('modeling')
     clf = RandomForestClassifier(random_state=10, max_features='sqrt')
     pipe = Pipeline([('classify', clf)])
     param_test = {'classify__n_estimators': list(range(20, 30, 1)),  # 20～30を１刻みずつ試す
                   'classify__max_depth': list(range(3, 10, 1))}      # 3～10を１刻みずつ試す
-    grid = GridSearchCV(estimator = pipe, param_grid=param_test, scoring='accuracy', cv=10)
+    grid = GridSearchCV(estimator=pipe, param_grid=param_test, scoring='accuracy', cv=10)
 
     grid.fit(X, y)
     print(grid.best_params_, grid.best_score_, sep="\n")
