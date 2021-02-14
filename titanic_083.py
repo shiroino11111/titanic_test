@@ -12,6 +12,20 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
 
+def fill_null(df):
+    # Age(年齢)とFare(料金)はそれぞれの中央値、Embarked(出港地)はS(Southampton)を代入
+    print('fillna')
+    df = fill_null_mean(df, 'Age')
+    df = fill_null_mean(df, 'Fare')
+    df["Embarked"].fillna("S", inplace=True) 
+    return df
+
+
+def fill_null_mean(df, pk_col):
+    df[pk_col].fillna(df[pk_col].mean(), inplace=True)
+    return df
+
+
 def main():
     warnings.filterwarnings('ignore')
 
@@ -30,11 +44,8 @@ def main():
     # Cabin は一旦除外
     del dataset["Cabin"]
 
-    # Age(年齢)とFare(料金)はそれぞれの中央値、Embarked(出港地)はS(Southampton)を代入
-    print('filllna')
-    dataset["Age"].fillna(dataset.Age.mean(), inplace=True) 
-    dataset["Fare"].fillna(dataset.Fare.mean(), inplace=True) 
-    dataset["Embarked"].fillna("S", inplace=True)
+    # 欠損値処理
+    dataset = fill_null(dataset)
 
     # 使用する変数を抽出
     dataset = dataset[['Survived', 'Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'Parch', 'SibSp']]
