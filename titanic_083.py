@@ -35,10 +35,6 @@ dataset["Age"].fillna(dataset.Age.mean(), inplace=True)
 dataset["Fare"].fillna(dataset.Fare.mean(), inplace=True) 
 dataset["Embarked"].fillna("S", inplace=True)
 
-# 全体の欠損データの個数を確認
-dataset_null = dataset.fillna(np.nan)
-dataset_null.isnull().sum()
-
 # 使用する変数を抽出
 dataset2 = dataset[['Survived', 'Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'Parch', 'SibSp']]
 
