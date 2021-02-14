@@ -40,14 +40,12 @@ def main():
     # 提出用に
     PassengerId = test['PassengerId']
 
-    # Cabin は一旦除外
-    del dataset["Cabin"]
+    # 使用する変数を抽出
+    # Cabin は除外
+    dataset = dataset[['Survived', 'Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'Parch', 'SibSp']]
 
     # 欠損値処理
     dataset = fill_null(dataset)
-
-    # 使用する変数を抽出
-    dataset = dataset[['Survived', 'Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'Parch', 'SibSp']]
 
     # ダミー変数を作成
     print('make dummy data')
